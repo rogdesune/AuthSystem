@@ -1,6 +1,5 @@
 ﻿using AuthSystem.Application.Interfaces;
 using AuthSystem.Domain;
-using Microsoft.AspNetCore.Identity;
 
 namespace AuthSystem.Application.Services
 {
@@ -9,7 +8,7 @@ namespace AuthSystem.Application.Services
         private readonly IUserRepository _userRepository;
         private readonly IPasswordService _passwordService;
 
-        public AuthService (IUserRepository userRepository, IPasswordService passwordService)
+        public AuthService(IUserRepository userRepository, IPasswordService passwordService)
         {
             _userRepository = userRepository;
             _passwordService = passwordService;
@@ -18,12 +17,13 @@ namespace AuthSystem.Application.Services
         public User Register(string email, string password)
         {
             var emailVo = new Email(email);
-            if (_userRepository.ExistsByEmail(emailVo)) {
+            if (_userRepository.ExistsByEmail(emailVo))
+            {
                 throw new InvalidOperationException("Email já cadastrado");
             }
             var user = new User(emailVo);
             var hash = _passwordService.HashPassword(user, password);
-            user.ChangePassword(hash);
+            user.SetPassword(hash);
             _userRepository.Add(user);
             return user;
         }
@@ -43,5 +43,17 @@ namespace AuthSystem.Application.Services
             }
             return user;
         }
+        
+        public User ChangeUserEmail(string CurrentEmail, string NewEmail)
+        {
+            var user = _userRepository.GetByEmail(new Email(CurrentEmail));
+            if (user == null)
+            {
+                throw new KeyNotFoundException("Usuário não encontrado");
+            }
+            user.ChangeEmail(new Email(NewEmail));
+            return user;
+        }
+
     }
 }

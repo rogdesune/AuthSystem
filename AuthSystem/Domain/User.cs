@@ -4,7 +4,7 @@ namespace AuthSystem.Domain
     public class User
     {
         public Guid Id { get; private set; }
-        public Email Email { get; private set; }
+        public Email Email { get ; private set; }
         public string? PasswordHash { get; private set; }
         public Role Role { get; private set; }
         public DateTime CreatedAt { get; private set; }
@@ -24,7 +24,7 @@ namespace AuthSystem.Domain
             return !string.IsNullOrEmpty(this.PasswordHash);
         }
 
-        public void ChangePassword(string newPasswordHash)
+        public void SetPassword(string newPasswordHash)
         {
             if(string.IsNullOrWhiteSpace(newPasswordHash))
             {
@@ -35,9 +35,13 @@ namespace AuthSystem.Domain
         }
         public void ChangeEmail (Email newEmail)
         {
-            if (newEmail == null)
+            if (newEmail is null)
             {
                 throw new ArgumentNullException(nameof(newEmail));
+            }
+            if (newEmail.Equals(this.Email))
+            {
+                throw new ArgumentException("O novo email deve ser diferente do email atual.", nameof(newEmail));
             }
             this.Email = newEmail;
             LastUpdatedAt = DateTime.UtcNow;
