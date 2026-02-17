@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using AuthSystem.Application.Interfaces;
-using AuthSystem.Domain;
 namespace AuthSystem.Controllers
 {
     [ApiController]
